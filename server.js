@@ -10,7 +10,8 @@ import upload from './config/fileStorage.js';
 
 //Router Imports
 import userRoutes from './routes/userRoutes.js';
-import workspaceRouter from './routes/workspaceRoutes.js'
+import workspaceRoutes from './routes/workspaceRoutes.js'
+import clientRoutes from './routes/clientRoutes.js';
 
 const app = express();
 dotenv.config({path:'.env'});
@@ -48,7 +49,8 @@ app.post('/upload-csv', upload.single('csvfile'), function (req, res, next) {
 
 //Routes
 app.use('/api/users', userRoutes);
-app.use('/api/workspaces', workspaceRouter)
+app.use('/api/workspaces', workspaceRoutes)
+app.use('/api/clients', clientRoutes)
 // readSpreadsheet();
 
 app.listen(process.env.PORT, (err, res) => {
