@@ -13,7 +13,13 @@ import clientRoutes from './routes/clientRoutes.js';
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: '*', // Allow requests from any origin
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow specific HTTP methods
+  headers: ['Content-Type', 'Authorization', 'Accept'], // Allow specific headers
+  credentials: true, // Allow cookies and authentication
+  exposedHeaders: ['Set-Cookie'] // Allow exposing cookies
+}));
 dotenv.config({path:'.env'});
 
 
