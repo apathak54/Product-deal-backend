@@ -38,7 +38,7 @@ const userAuth = async (req, res, next) => {
     // if (!isMatch)
     //     return res.status(401).json({error: "User changed password! please login again"});
 
-    req.user = { name: decoded.username, id: decoded.id };
+    req.user = { email: decoded.username, id: decoded.id };
 
     next();
 };

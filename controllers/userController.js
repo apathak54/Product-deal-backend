@@ -4,7 +4,7 @@ import User from '../models/User.js';
 
 export async function userRegister(req, res) {
     try {
-        const { fullname , email ,  password } = req.body;
+        const { username , email ,  password } = req.body;
         const user = await User.find({ email: email });
         if (user.length > 0) {
             return res.status(409).json({ message: "user already exists. ", success: false });
@@ -13,7 +13,7 @@ export async function userRegister(req, res) {
         const passwordHash = await bcrypt.hash(password, salt);
 
         const newUser = new User({
-            fullname ,
+            username ,
             email ,
             password: passwordHash,
             workspaces: []
@@ -43,7 +43,7 @@ export async function userLogin(req, res) {
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(401).json({ message: "Wrong Password. ", success: false });
-        const token = jwt.sign({ id: user._id, username }, process.env.SECRET_KEY); // Removed password from token payload for security
+        const token = jwt.sign({ id: user._id, email }, process.env.SECRET_KEY); // Removed password from token payload for security
 
         // Convert the user document to a plain JavaScript object and delete the password
         const userObject = user.toObject();
