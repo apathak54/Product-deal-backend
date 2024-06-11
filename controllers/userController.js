@@ -4,7 +4,7 @@ import User from '../models/User.js';
 
 export async function userRegister(req, res) {
     try {
-        const { fullname , email ,  password } = req.body;
+        const { fullname, email, password } = req.body;
         const user = await User.find({ email: email });
         if (user.length > 0) {
             return res.status(409).json({ message: "user already exists. ", success: false });
@@ -13,8 +13,8 @@ export async function userRegister(req, res) {
         const passwordHash = await bcrypt.hash(password, salt);
 
         const newUser = new User({
-            fullname ,
-            email ,
+            fullname,
+            email,
             password: passwordHash,
             workspaces: []
         });
@@ -37,8 +37,11 @@ export async function userRegister(req, res) {
 export async function userLogin(req, res) {
     try {
         const { email, password } = req.body;
+        if (!email || !password) {
+            return res.status(400).json({ message: "Please provide email and password", success: false });
+        }
         const user = await User.findOne({ email });
-        // console.log('user', user);
+        console.log('user', user);
         if (!user) return res.status(401).json({ message: "user does not exist. ", success: false });
 
         const isMatch = await bcrypt.compare(password, user.password);

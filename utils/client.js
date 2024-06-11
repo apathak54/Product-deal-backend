@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
-import Client from './clientModel'; // Ensure the correct path to the client model
-
+import Client from '../models/Client.js';
 /**
  * Save an array of clients to the database
  * @param {Array} clients - Array of client objects
@@ -14,19 +13,24 @@ export async function saveClients(clients, workspaceId) {
             throw new Error('Invalid input data');
         }
 
-        // Map over the clients array to add the workspaceId to each client
-        const clientsWithWorkspaceId = clients.map(client => ({
-            ...client,
-            workspace_id: workspaceId
-        }));
-
         // Use insertMany to save all clients in one operation
-        const savedClients = await Client.insertMany(clientsWithWorkspaceId);
-        console.log("savedClients", savedClients);
+        const savedClients = await Client.insertMany(clients, {
+            validateBeforeSave: true,
+            ordered: true
+        });
+        console.log("Kyaa??", saveClients)
 
-        return savedClients;
+        // Check for duplicate emails
+        const duplicateEmails = savedClients.filter((client, index) => {
+            return index < savedClients.length - 1 && client.email === savedClients[index + 1].email;
+        });
+        console.log("duplicateEmails", duplicateEmails);
+
+        if (duplicateEmails.length > 0) {
+            console.log("Yes returning this");
+            return res.status(400).json({ message: 'Duplicate clients found', success: false, duplicateEmails });
+        }
     } catch (error) {
-        console.error('Error saving clients:', error);
         throw error;
     }
 }

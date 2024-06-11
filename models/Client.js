@@ -12,6 +12,7 @@ const clientSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
+        unique: true,
     },
     commodity: {
         type: String,
@@ -24,5 +25,11 @@ const clientSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 const Client = mongoose.model('Client', clientSchema);
+
+Client.collection.createIndex({ email: 1 }, { unique: true }, (err, result) => {
+    if (err) {
+        console.log("Trying to save duplicate clients, operation failed.")
+    }
+});
 
 export default Client;

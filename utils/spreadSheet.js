@@ -1,15 +1,32 @@
 import xlsx from 'xlsx'
+import Client from '../models/Client.js';
 
-export default function readSpreadsheet() {
-    var workbook = xlsx.readFile("data.csv");
-    console.log(workbook);
+export default function readSpreadsheet(filename, workspaceId) {
+    var workbook = xlsx.readFile(`uploads/${filename}`);
     let worksheet = workbook.Sheets[workbook.SheetNames[0]];
-    console.log(worksheet)
-    for (let index = 1; index < 7; index++) {
-        const id = worksheet[`A${index}`].v;
-        const name = worksheet[`B${index}`].v;
-        console.log({
-            id: id, name: name
-        })
+    const clients = [];
+    let index = 2
+    while (true) {
+        const sno = worksheet[`A${index}`];
+        if (!sno || !Number.isInteger(sno.v)) {
+            break;
+        }
+    
+        const clientData = {
+            clientName: worksheet[`B${index}`]?.v || 'Not Assigned',
+            companyName: worksheet[`C${index}`]?.v || 'Not Assigned',
+            email: worksheet[`D${index}`]?.v || 'Not Assigned',
+            commodity: worksheet[`E${index}`]?.v || 'Not Assigned',
+            workspace_id: workspaceId,
+        };
+    
+        const newClient = new Client(clientData);
+        clients.push(newClient);
+        index++;
     }
+    
+    
+    
+
+    return clients;
 }
