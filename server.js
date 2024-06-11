@@ -5,8 +5,6 @@ import multer from 'multer';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import readSpreadsheet from './utils/spreadSheet.js';
-import upload from './config/fileStorage.js';
 
 //Router Imports
 import userRoutes from './routes/userRoutes.js';
@@ -41,17 +39,17 @@ app.use(cors(corsOptions));
 
 app.use(bodyParser.json({ limit: '5mb' }));
 
-app.post('/upload-csv', upload.single('csvfile'), function (req, res, next) {
-  
-  console.log(req.file);
-  res.send('File uploaded successfully');
-})
 
 //Routes
+app.get('/', (req, res) => {
+    res.status(200).json({ message: 'Server is up and running', success: true });
+});
+
+app.use('/api/auth', userRoutes);
+app.use('/api/workspaces', workspaceRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/workspaces', workspaceRoutes)
 app.use('/api/clients', clientRoutes)
-// readSpreadsheet();
 
 app.listen(process.env.PORT, (err, res) => {
     if (err) {
