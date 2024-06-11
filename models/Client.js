@@ -18,6 +18,12 @@ const clientSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    status:{
+        type: String,
+        enum: ['completed', 'pending'],
+        required: true,
+        default:'pending',
+    },
     workspace_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Workspace', required: true

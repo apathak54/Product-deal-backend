@@ -17,6 +17,7 @@ export default function readSpreadsheet(filename, workspaceId) {
             companyName: worksheet[`C${index}`]?.v || 'Not Assigned',
             email: worksheet[`D${index}`]?.v || 'Not Assigned',
             commodity: worksheet[`E${index}`]?.v || 'Not Assigned',
+            status: 'pending',
             workspace_id: workspaceId,
         };
     

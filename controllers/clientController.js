@@ -20,6 +20,7 @@ export async function addSingleClient(req, res) {
             companyName,
             email,
             commodity,
+            status: 'pending',
             workspace_id: workspaceId
         });
         const savedClient = await newClient.save();
