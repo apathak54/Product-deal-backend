@@ -4,7 +4,7 @@ import User from '../models/User.js';
 
 export async function userRegister(req, res) {
     try {
-        const { username , email ,  password } = req.body;
+        const { fullname , email ,  password } = req.body;
         const user = await User.find({ email: email });
         if (user.length > 0) {
             return res.status(409).json({ message: "user already exists. ", success: false });
@@ -13,7 +13,7 @@ export async function userRegister(req, res) {
         const passwordHash = await bcrypt.hash(password, salt);
 
         const newUser = new User({
-            username ,
+            fullname ,
             email ,
             password: passwordHash,
             workspaces: []

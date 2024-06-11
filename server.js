@@ -14,11 +14,11 @@ import workspaceRoutes from './routes/workspaceRoutes.js'
 import clientRoutes from './routes/clientRoutes.js';
 
 const app = express();
+
+app.use(cors());
 dotenv.config({path:'.env'});
 
-const allowedOrigins = [
-    "http://localhost:5173"
-]
+
 
 mongoose
   .connect(process.env.DB_URL, {
@@ -29,15 +29,10 @@ mongoose
     console.log("> DB connection successful ... ");
   });
 
-const corsOptions = {
-    origin: allowedOrigins,
-    credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    exposedHeaders: ['dapp'],
-};
+
 
 app.use(helmet());
-app.use(cors(corsOptions));
+
 
 app.use(bodyParser.json({ limit: '5mb' }));
 
