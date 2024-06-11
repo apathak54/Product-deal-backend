@@ -18,18 +18,18 @@ export async function saveClients(clients, workspaceId) {
             validateBeforeSave: true,
             ordered: true
         });
-        console.log("Kyaa??", saveClients)
 
-        // Check for duplicate emails
-        const duplicateEmails = savedClients.filter((client, index) => {
-            return index < savedClients.length - 1 && client.email === savedClients[index + 1].email;
-        });
-        console.log("duplicateEmails", duplicateEmails);
+        // // Check for duplicate emails
+        // const duplicateEmails = savedClients.filter((client, index) => {
+        //     return index < savedClients.length - 1 && client.email === savedClients[index + 1].email;
+        // });
+        // console.log("duplicateEmails", duplicateEmails);
 
-        if (duplicateEmails.length > 0) {
-            console.log("Yes returning this");
-            return res.status(400).json({ message: 'Duplicate clients found', success: false, duplicateEmails });
-        }
+        // if (duplicateEmails.length > 0) {
+        //     console.log("Yes returning this");
+        //     return res.status(400).json({ message: 'Duplicate clients found', success: false, duplicateEmails });
+        // }
+        return savedClients;
     } catch (error) {
         throw error;
     }
