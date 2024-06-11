@@ -15,19 +15,8 @@ dotenv.config({path:'.env'});
 
 const app = express();
 app.use(express.json());
-app.use(cors({
-  origin: '*', // Allow requests from any origin
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow specific HTTP methods
-  headers: ['Content-Type', 'Authorization', 'Accept'], // Allow specific headers
-  credentials: true, // Allow cookies and authentication
-  exposedHeaders: ['Set-Cookie'] // Allow exposing cookies
-}));
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  next();
-});
+app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
+app.use(cors());
 
 
 
@@ -42,7 +31,6 @@ mongoose
 
 
 
-app.use(helmet());
 
 
 app.use(bodyParser.json({ limit: '5mb' }));
