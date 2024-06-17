@@ -26,10 +26,11 @@ export async function createWorkspace(req, res) {
 export async function getWorkspaces(req, res) {
     try {
         const workspace = await Workspace.find({ user_id: req.user.id });
+        console.log(req.user_id)
         if (!workspace) {
             return res.status(404).json({ message: "No workspaces found", success: false, workspace });
         }
-        return res.status(200).json({ message: "Workspaces found", success: true, workspace });
+        return res.status(200).json({ message: "Workspaces found", success: true, workspace  });
     } catch (error) {
         res.status(500).json({ message: 'Internal Server Error', success: false, error: error.message });
     }

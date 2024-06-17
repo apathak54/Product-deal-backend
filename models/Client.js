@@ -18,24 +18,19 @@ const clientSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    status:{
+    status: {
         type: String,
         enum: ['completed', 'pending'],
         required: true,
-        default:'pending',
+        default: 'pending',
     },
     workspace_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Workspace', required: true
+        ref: 'Workspace', 
+        required: true
     },
 }, { timestamps: true });
 
 const Client = mongoose.model('Client', clientSchema);
-
-// Client.collection.createIndex({ email: 1 }, { unique: true }, (err, result) => {
-//     if (err) {
-//         console.log("Trying to save duplicate clients, operation failed.")
-//     }
-// });
 
 export default Client;
