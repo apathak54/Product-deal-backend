@@ -24,6 +24,10 @@ const clientSchema = new mongoose.Schema({
         required: true,
         default: 'pending',
     },
+    template: {
+        type:String ,
+        required : true 
+    },
     workspace_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Workspace', 

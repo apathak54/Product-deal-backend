@@ -6,8 +6,9 @@ import readSpreadsheet from "../utils/spreadSheet.js";
 
 export async function addSingleClient(req, res) {
     try {
-        const { clientName, companyName, email, commodity } = req.body;
+        const { clientName, companyName, email, commodity ,template} = req.body;
         const { workspaceId } = req.params;
+        
         const workspace = await Workspace.findById(workspaceId);
         if (!workspace) {
             return res.status(404).json({ message: "Workspace not found", success: false, workspace });
@@ -21,6 +22,7 @@ export async function addSingleClient(req, res) {
             email,
             commodity,
             status: 'pending',
+            template,
             workspace_id: workspaceId
         });
         const savedClient = await newClient.save();
