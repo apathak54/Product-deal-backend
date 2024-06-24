@@ -10,7 +10,7 @@ import mongoose from 'mongoose';
 import userRoutes from './routes/userRoutes.js';
 import workspaceRoutes from './routes/workspaceRoutes.js'
 import clientRoutes from './routes/clientRoutes.js';
-import emailRoutes from './routes/userRoutes.js'
+//import emailRoutes from './routes/emailRoutes.js'
 dotenv.config({path:'.env'});
 
 const app = express();
@@ -46,7 +46,7 @@ app.use('/api/workspaces', workspaceRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/workspaces', workspaceRoutes)
 app.use('/api/clients', clientRoutes)
-app.use('/api/email',emailRoutes)
+//app.use('/api/email',emailRoutes)
 
 app.listen(process.env.PORT, (err, res) => {
     if (err) {

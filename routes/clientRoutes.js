@@ -8,5 +8,5 @@ const router = express.Router();
 router.post('/addOneClient/:workspaceId', userAuth, clientController.addSingleClient);
 router.get('/:workspaceId', userAuth, clientController.getClients);
 router.post('/:workspaceId/upload-csv', userAuth, upload.single('csvfile'), clientController.addClientsWithSheet)
-
+router.delete('/deletleoneclient/:workspaceId/:clientId',userAuth , clientController.deleteSingleClient)
 export default router;

@@ -35,6 +35,34 @@ export async function addSingleClient(req, res) {
         res.status(500).json({ message: 'Internal Server Error', success: false, error: error.message });
     }
 }
+export async function deleteSingleClient(req, res) {
+    try {
+        const { workspaceId, clientId } = req.params;
+    
+        // Check if the workspace exists
+        const workspace = await Workspace.findById(workspaceId);
+        if (!workspace) {
+          return res.status(404).json({ message: "Workspace not found", success: false });
+        }
+    
+        // Ensure the requesting user has permission to delete clients in this workspace
+        if (!workspace.user_id.equals(req.user.id)) {
+          return res.status(401).json({ message: "Unauthorized", success: false });
+        }
+    
+        // Find the client by ID and delete it
+        const deletedClient = await Client.findByIdAndDelete(clientId);
+        if (!deletedClient) {
+          return res.status(404).json({ message: "Client not found", success: false });
+        }
+    
+        // Respond with success message
+        return res.status(200).json({ message: 'Client deleted successfully', success: true });
+      } catch (error) {
+        console.error('Error deleting client:', error);
+        return res.status(500).json({ message: 'Internal Server Error', success: false, error: error.message });
+      }
+}
 
 export async function getClients(req, res) {
     try {

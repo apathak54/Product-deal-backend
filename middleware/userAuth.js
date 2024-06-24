@@ -33,10 +33,10 @@ const userAuth = async (req, res, next) => {
     if (!user) {
         return res.status(401).json({error: "The user does not exist"});
     }
-
-    const isMatch = await bcrypt.compare(decoded.password, user.password);
-    if (!isMatch)
-        return res.status(401).json({error: "User changed password! please login again"});
+   
+    // const isMatch = await bcrypt.compare(decoded.password, user.password);
+    // if (!isMatch)
+    //     return res.status(401).json({error: "User changed password! please login again"});
 
     req.user = { email: decoded.username, id: decoded.id };
 

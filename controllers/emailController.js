@@ -11,9 +11,9 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-export const saveDraft = async (req, res) => {
+export const  saveDraft = async (req, res) => {
     try {
-        const { clientId, subject, html } = req.body;
+        const { clientId, html } = req.body;
 
         // Check if the client exists
         const client = await Client.findById(clientId);
@@ -21,7 +21,7 @@ export const saveDraft = async (req, res) => {
             return res.status(404).json({ message: 'Client not found' });
         }
 
-        const draft = new Draft({ clientId, subject, html });
+        const draft = new Draft({ clientId, html });
         await draft.save();
         res.status(200).json({ message: 'Draft saved successfully', success: true });
     } catch (error) {
@@ -30,7 +30,7 @@ export const saveDraft = async (req, res) => {
     }
 };
 
-export const sendDraft = async (req, res) => {
+export const  sendDraft = async (req, res) => {
     try {
         const draft = await Draft.findById(req.params.id).populate('clientId');
         if (!draft) {
@@ -39,7 +39,7 @@ export const sendDraft = async (req, res) => {
 
         const mailOptions = {
             from: process.env.MAIL_USER,
-            to: draft.clientId.email,
+            to: 'rahulkgg078@gmail.com',
             subject: draft.subject,
             html: draft.html,
         };
