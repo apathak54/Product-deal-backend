@@ -36,6 +36,7 @@ export async function addSingleClient(req, res) {
     }
 }
 export async function deleteSingleClient(req, res) {
+    console.log('Delete request received for clientId:', req.params.clientId);
     try {
         const { workspaceId, clientId } = req.params;
     
