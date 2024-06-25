@@ -26,7 +26,7 @@ const clientSchema = new mongoose.Schema({
     },
     template: {
         type:String ,
-        required : true 
+        required : false 
     },
     workspace_id: {
         type: mongoose.Schema.Types.ObjectId,
