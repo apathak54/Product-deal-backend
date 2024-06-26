@@ -22,8 +22,7 @@ app.use(cors());
 
 mongoose
   .connect(process.env.DB_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+
   })
   .then(() => {
     console.log("> DB connection successful ... ");
@@ -41,10 +40,9 @@ app.get('/', (req, res) => {
     res.status(200).json({ message: 'Server is up and running', success: true });
 });
 
-app.use('/api/auth', userRoutes);
+
 app.use('/api/workspaces', workspaceRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/workspaces', workspaceRoutes)
 app.use('/api/clients', clientRoutes)
 //app.use('/api/email',emailRoutes)
 

@@ -2,6 +2,7 @@ import Client from "../models/Client.js";
 import Workspace from "../models/Workspace.js";
 import { saveClients } from "../utils/client.js";
 import readSpreadsheet from "../utils/spreadSheet.js";
+import { sendMail } from "../utils/email.js";
 
 
 export async function addSingleClient(req, res) {
@@ -36,6 +37,7 @@ export async function addSingleClient(req, res) {
     }
 }
 export async function deleteSingleClient(req, res) {
+    console.log('Delete request received for clientId:', req.params.clientId);
     try {
         const { workspaceId, clientId } = req.params;
     
@@ -83,6 +85,39 @@ export async function getClients(req, res) {
     }
 }
 
+export async function updateClients(req, res) {
+    try {
+        const { workspaceId } = req.params;
+        const { template } = req.body;
+
+        // Find the workspace by ID
+        const workspace = await Workspace.findById(workspaceId);
+        if (!workspace) {
+            return res.status(404).json({ message: "Workspace not found", success: false });
+        }
+
+        // Check if the authenticated user has access to update clients in this workspace
+        if (!workspace.user_id.equals(req.user.id)) {
+            return res.status(401).json({ message: "Unauthorized", success: false });
+        }
+
+        // Find all clients in the workspace
+        const clients = await Client.find({ workspace_id: workspaceId });
+        if (!clients || clients.length === 0) {
+            return res.status(404).json({ message: "No clients found in this workspace", success: false });
+        }
+
+        // Update template for all clients
+        await Promise.all(clients.map(async (client) => {
+            client.template = template;
+            await client.save();
+        }));
+
+        return res.status(200).json({ success: true, message: 'Template saved successfully for all clients' });
+    } catch (error) {
+        return res.status(500).json({ message: 'Internal Server Error', success: false, error: error.message });
+    }
+}
 export async function addClientsWithSheet(req, res) {
     try {
         const { workspaceId } = req.params;
@@ -102,5 +137,80 @@ export async function addClientsWithSheet(req, res) {
         return res.status(200).json({ success: true, clients });
     } catch (error) {
         res.status(500).json({ message: 'Internal Server Error', success: false, error: error.message });
+    }
+}
+
+
+export async function saveDraft(req, res) {
+    console.log('Save request received for clientId:', req.params.clientId);
+    try {
+        const { workspaceId, clientId } = req.params;
+        const{template}=req.body;
+        // Check if the workspace exists
+        const workspace = await Workspace.findById(workspaceId);
+        if (!workspace) {
+          return res.status(404).json({ message: "Workspace not found", success: false });
+        }
+    
+        // Ensure the requesting user has permission to delete clients in this workspace
+        if (!workspace.user_id.equals(req.user.id)) {
+          return res.status(401).json({ message: "Unauthorized", success: false });
+        }
+        // Find the client by ID and delete it
+        const client = await Client.findById(clientId);
+        if (!client) {
+            return res.status(404).json({ message: 'Client not found' });
+        }
+        client.template=template;
+        await client.save();
+        res.status(200).json({ message: 'Email saved successfully', success: true });
+    } catch (error) {
+    console.log("error saving Email ",error.stack);
+        console.log(error);
+        res.status(500).json({ error: error.message });
+    }
+}
+
+export async function sendDraft(req, res) {
+    console.log('Send request received for clientId:', req.params.clientId);
+    try {
+        const { workspaceId, clientId } = req.params;
+
+        // Check if the workspace exists
+        const workspace = await Workspace.findById(workspaceId);
+        if (!workspace) {
+            return res.status(404).json({ message: "Workspace not found", success: false });
+        }
+
+//         // Ensure the requesting user has permission to delete clients in this workspace
+        if (!workspace.user_id.equals(req.user.id)) {
+            return res.status(401).json({ message: "Unauthorized", success: false });
+        }
+
+//         // Find the client by ID and delete it
+        const client = await Client.findById(clientId);
+        if (!client) {
+            return res.status(404).json({ message: 'Client not found' });
+        }
+
+        const mailOptions = {
+            from: process.env.MAIL_USER,
+            to: client.email,
+            subject: process.env.EMAIL_SUBJECT,
+            html: client.template
+        };
+
+        console.log('Mail options:', mailOptions);
+
+    sendMail(mailOptions).then(() => {
+        client.status = 'sent'
+        client.save() 
+    return res.status(200).json({ message: 'Email sent successfully', success: true });
+  }).catch(error => {
+    console.error('Error sending threshold email:', error);
+  });
+    } catch (error) {
+        console.error('Error in sendEmail function:', error);
+        res.status(500).json({ error: error.message });
     }
 }
