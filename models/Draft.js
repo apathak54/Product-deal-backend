@@ -1,12 +1,25 @@
-import mongoose from "mongoose";
+// models/Email.js
 
+import mongoose from 'mongoose';
 
-const draftSchema = new mongoose.Schema({
-    clientId: { type: mongoose.Schema.Types.ObjectId, ref: 'Client', required: true },
-    html: { type: String, required: true },
-    createdAt: { type: Date, default: Date.now }
-});
+const emailSchema = new mongoose.Schema({
+  template: {
+    type: String,
+    required: true
+  },
+  clientId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Client',
+    required: true
+  },
+  status: {
+    type: String,
+    enum: ['draft', 'sent'],
+    default: 'draft'
+  },
+  // Add any other fields related to emails
+}, { timestamps: true });
 
-const Draft = mongoose.model('Draft', draftSchema);
+const Draft = mongoose.model('Draft', emailSchema);
 
 export default Draft;

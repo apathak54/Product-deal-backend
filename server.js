@@ -1,58 +1,45 @@
 import express from 'express';
-import cors from 'cors';
-import bodyParser from 'body-parser';
-import multer from 'multer';
-import helmet from 'helmet';
 import dotenv from 'dotenv';
+import cors from 'cors';
+import helmet from 'helmet';
 import mongoose from 'mongoose';
 
-//Router Imports
+// Router Imports
 import userRoutes from './routes/userRoutes.js';
-import workspaceRoutes from './routes/workspaceRoutes.js'
+import workspaceRoutes from './routes/workspaceRoutes.js';
 import clientRoutes from './routes/clientRoutes.js';
-//import emailRoutes from './routes/emailRoutes.js'
-dotenv.config({path:'.env'});
+
+dotenv.config({ path: '.env' });
 
 const app = express();
+
+// Middleware
 app.use(express.json());
 app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
 app.use(cors());
 
-
-
-mongoose
-  .connect(process.env.DB_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log("> DB connection successful ... ");
-  });
-
-
-
-
-
-app.use(bodyParser.json({ limit: '5mb' }));
-
-
-//Routes
-app.get('/', (req, res) => {
-    res.status(200).json({ message: 'Server is up and running', success: true });
+// MongoDB Connection
+mongoose.connect(process.env.DB_URL, {
+  
+})
+.then(() => {
+  console.log("> DB connection successful ... ");
+})
+.catch(err => {
+  console.error('DB connection error:', err);
 });
+
+// Routes
+app.get('/', (req, res) => {
+  res.status(200).json({ message: 'Server is up and running', success: true });
+});
+
 
 app.use('/api/auth', userRoutes);
 app.use('/api/workspaces', workspaceRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/workspaces', workspaceRoutes)
-app.use('/api/clients', clientRoutes)
-//app.use('/api/email',emailRoutes)
+app.use('/api/clients', clientRoutes);
 
-app.listen(process.env.PORT, (err, res) => {
-    if (err) {
-        console.log(err);
-    }
-    else {
-        console.log("Server is up and running on port " + process.env.PORT);
-    }
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+  console.log(`Server is up and running on port ${PORT}`);
 });

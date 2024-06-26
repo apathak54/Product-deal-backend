@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer'
-import Client from '../models/Client';
-import Draft from '../models/Draft';
+import Client from '../models/Client.js';
+import Email from '../models/Draft.js';
 
 // Set up the transporter
 const transporter = nodemailer.createTransport({
@@ -10,10 +10,10 @@ const transporter = nodemailer.createTransport({
         pass: process.env.MAIL_PASS, // Your email password
     }
 });
-
-export const  saveDraft = async (req, res) => {
+export const  saveEmail = async (req, res) => {
     try {
-        const { clientId, html } = req.body;
+        console.log('Request received:', req.body);
+        const { clientId, template } = req.body;
 
         // Check if the client exists
         const client = await Client.findById(clientId);
@@ -21,34 +21,43 @@ export const  saveDraft = async (req, res) => {
             return res.status(404).json({ message: 'Client not found' });
         }
 
-        const draft = new Draft({ clientId, html });
-        await draft.save();
-        res.status(200).json({ message: 'Draft saved successfully', success: true });
+          let email = await Email.findOne({clientId})
+          if(email)
+          {
+          email.template=template;
+          }
+          else
+          {
+          email = new Email({ clientId, template });
+          }
+        await email.save();
+        res.status(200).json({ message: 'Email saved successfully', success: true });
     } catch (error) {
+    console.log("error saving Email ",error.stack);
         console.log(error);
         res.status(500).json({ error: error.message });
     }
 };
 
-export const  sendDraft = async (req, res) => {
+export const  sendemail = async (req, res) => {
     try {
-        const draft = await Draft.findById(req.params.id).populate('clientId');
-        if (!draft) {
-            return res.status(404).json({ message: 'Draft not found' });
+        const email = await email.findById(req.params.id).populate('clientId');
+        if (!email) {
+            return res.status(404).json({ message: 'Email not found' });
         }
 
         const mailOptions = {
             from: process.env.MAIL_USER,
-            to: 'rahulkgg078@gmail.com',
-            subject: draft.subject,
-            html: draft.html,
+            to: 'kanishkasrivastava629@gmail.com',
+            subject: email.subject,
+            html: email.html,
         };
 
         transporter.sendMail(mailOptions, async (error, info) => {
             if (error) {
                 return res.status(500).json({ error });
             }
-            await Draft.findByIdAndDelete(req.params.id);
+            await email.findByIdAndDelete(req.params.id);
             res.status(200).json({ message: 'Email sent successfully', success: true });
         });
     } catch (error) {

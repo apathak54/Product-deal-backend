@@ -9,4 +9,7 @@ router.post('/addOneClient/:workspaceId', userAuth, clientController.addSingleCl
 router.get('/:workspaceId', userAuth, clientController.getClients);
 router.post('/:workspaceId/upload-csv', userAuth, upload.single('csvfile'), clientController.addClientsWithSheet)
 router.delete('/deleteOneclient/:workspaceId/:clientId',userAuth , clientController.deleteSingleClient)
+router.post('/:workspaceId/:clientId/saveDraft',userAuth , clientController.saveDraft)
+router.get('/:workspaceId/:clientId/sendEmail',userAuth , clientController.sendDraft)
+
 export default router;
